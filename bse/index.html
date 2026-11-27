@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>BSE - Banco Santiago del Estero</title>
+
+<style>
+
+  :root{
+    --green:#0b7a33;
+    --navy:#22385b;
+    --topbar:#f1f3f5;
+    --border:#e5e7eb;
+    --text:#1f2a37;
+    --muted:#6b7280;
+    --dot:#d7dde6;
+    --dotActive:#1b2e45;
+    --orange:#f39b2f;
+    --colorazul: #243353;
+    --colorverde: #007E3A;
+    --colorgris: #777777;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:#fff;color:var(--text);}
+  a{color:inherit;text-decoration:none}
+  img{max-width:100%;display:block}
+
+  /* ================= TOPBAR (PC) ================= */
+  .topbar{background:var(--topbar);border-bottom:1px solid var(--border);font-size:12px;}
+  .topbar .wrap{max-width:1280px;margin:auto;padding:8px 20px;display:flex;justify-content:flex-end;gap:20px;flex-wrap:wrap;color:#555;}
+  .topbar a{display:flex;align-items:center;gap:6px;}
+  .topbar a::after{content:"○";font-size:8px;color:#aaa;}
+  .topbar a:last-child::after{display:none;}
+
+  /* ================= HEADER PC ================= */
+  .site-header{position:relative;background:#fff;border-bottom:1px solid var(--border);z-index:50;}
+  .mainbar{max-width:1280px;margin:auto;padding:16px 20px;display:flex;justify-content:space-between;align-items:center;}
+
+  /* Logo PC */
+  .brand{display:flex;align-items:center;}
+  .brand img{height:54px;width:auto;display:block;}
+  
+  /* Menu PC */
+  nav.menu{display:flex;justify-content:center;gap:34px;align-items:center;}
+  .menu .item{font-size:12px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;position:relative;padding:12px 0 18px;white-space:nowrap;color:#2c3a4f;cursor:pointer;}
+  .menu .item::after{content:"";position:absolute;left:50%;bottom:6px;transform:translateX(-50%);border-left:4px solid transparent;border-right:4px solid transparent;border-top:5px solid #8b97aa;}
+
+  /* Tarjeta flotante PC (Ajustada para no pegarse al borde) */
+  .hb-card{
+    position:absolute;
+    right: max(20px, calc(50% - 620px)); /* El truco está acá: se alinea con el contenedor */
+    top:0;
+    width:260px;
+    border-radius:0 0 22px 22px;
+    overflow:hidden;
+    box-shadow:0 12px 26px rgba(0,0,0,.18);
+    z-index:60;
+  }
+  .hb-card a{display:block;text-align:center;padding:20px 10px;font-weight:900;letter-spacing:1px;text-transform:uppercase;color:#fff;}
+  .hb-card .top{background:var(--green);}
+  .hb-card .bottom{background:var(--navy);}
+
+  /* ================= CARRUSEL (PC Y MÓVIL) ================= */
+  .hero-carousel-wrapper {
+    background: #fff;
+    padding-bottom: 15px;
+  }
+
+  .hero-carousel {
+    position: relative;
+    width: 100%;
+    height: 520px;
+    overflow: hidden;
+    background: #000;
+  }
+
+  .carousel-slide {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background-size: cover;
+    background-position: center;
+    opacity: 0;
+    transition: opacity 0.8s ease-in-out;
+    z-index: 1;
+  }
+
+  .carousel-slide.active {
+    opacity: 1;
+    z-index: 2;
+  }
+
+  /* Dots indicadores */
+  .carousel-dots {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    padding: 20px 0 10px 0;
+    background: #fff;
+  }
+
+  .carousel-dots .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #d7dde6;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+
+  .carousel-dots .dot.active {
+    background: #1b2e45;
+  }
+
+  /* ================== MOBILE HEADER ================== */
+  .mobile-header {
+    display: none;
+    background: #fff;
+    width: 100%;
+  }
+  
+  .mobile-header .logo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 12px;
+    background: #fff;
+    width: 100%;
+    position: relative;
+    z-index: 10;
+  }
+  
+  .mobile-header .logo img {
+    height: 48px;
+    width: auto;
+    display: block;
+    object-fit: contain;
+  }
+
+  /* ================== SECCIÓN MI BSE ================== */
+  .container{max-width:1280px;margin:0 auto;padding:0 20px;}
+  .section{padding:34px 0;border-bottom:1px solid var(--border);}
+  .title{text-align:center;font-size:26px;letter-spacing:6px;font-weight:500;color:#6b7280;margin-bottom:22px;}
+
+  /* Mosaico 2x4 */
+  .mosaic-wrap{background:#fff;}
+  .mosaic{display:grid;grid-template-columns:repeat(4, 1fr);gap:0;border-top:1px solid #f0f2f5;border-left:1px solid #f0f2f5;}
+  .tile{position:relative;height:220px;border-right:1px solid #f0f2f5;border-bottom:1px solid #f0f2f5;overflow:hidden;background:#e9eef5;}
+  .tile img{width:100%;height:100%;object-fit:cover;}
+  .tile .label{position:absolute;left:0; right:0; bottom:0;padding:14px 14px;background:linear-gradient(180deg, rgba(0,0,0,0), rgba(0,0,0,.55));color:#fff;font-weight:800;letter-spacing:.5px;text-transform:uppercase;font-size:16px;}
+
+  /* Novedades */
+  .news-row{display:grid;grid-template-columns: 1fr 1fr;gap:40px;align-items:start;margin-top:10px;}
+  .news-card{display:grid;grid-template-columns: 160px 1fr;gap:16px;align-items:center;}
+  .news-card img{width:160px;height:100px;object-fit:cover;border-radius:2px;}
+  .news-card h3{font-size:18px;font-weight:800;margin-bottom:6px;color:var(--green);}
+  .news-card p{font-size:12px;color:#6b7280;line-height:1.4;}
+  .news-card .badge{display:inline-flex;align-items:center;gap:8px;color:var(--green);font-weight:800;margin-bottom:4px;}
+
+  /* Accesos con íconos */
+  .quick{display:grid;grid-template-columns: repeat(7, 1fr);gap:18px;align-items:start;justify-items:center;padding-top:28px;}
+  .q-item{text-align:center;max-width:140px; display: flex; flex-direction: column; align-items: center;}
+  .q-icon{width:64px;height:64px;border-radius:18px;display:flex;align-items:center;justify-content:center;background:#fff;margin:0 auto 10px;}
+  .q-icon img { width: 100%; height: auto; object-fit: contain; }
+  .q-item a{color:var(--green);font-weight:700;text-decoration:underline;text-underline-offset:3px;font-size:13px;display:inline-block;line-height:1.15;}
+
+  /* Botones centrales */
+  .cta-row{display:flex;justify-content:center;gap:18px;margin-top:26px;}
+  .cta{padding:12px 18px;font-weight:800;color:#fff;font-size:13px;border-radius:0;display:inline-block;min-width:260px;text-align:center;}
+  .cta.navy{background:var(--navy);}
+  .cta.green{background:var(--green);}
+
+  /* Franja naranja Desktop */
+  .orange-bar{background:var(--orange);color:#fff;padding:10px 0;font-weight:800;text-align:center;letter-spacing:.4px;}
+  .orange-bar span{font-weight:900;}
+  .orange-bar a{color:#fff;text-decoration:underline;text-underline-offset:3px;}
+
+  /* Footer verde */
+  .footer{background:var(--green);color:#fff;padding:26px 0;}
+  .footer-inner{max-width:1280px;margin:0 auto;padding:0 20px;display:grid;grid-template-columns: 360px 1fr;gap:28px;align-items:start;}
+  .footer-left{display:flex;gap:14px;align-items:center;}
+  .footer-left img{height:54px;width:auto;}
+  .footer-phone{font-size:26px;font-weight:1000;letter-spacing:3px;margin-top:10px;}
+  .footer-left p{opacity:.95;font-size:14px;margin-top:6px;}
+  .footer-right ul{margin:0;padding-left:18px;font-size:12px;line-height:1.6;opacity:.95;}
+
+
+  /* ================= ESTILOS DEL BANNER MI BSE ================= */
+  .hb-banner--app {
+    position: relative;
+    overflow: hidden;
+    margin: 10px auto 24px auto;
+    max-width: 1000px;
+    padding: 30px;
+    background: #F4F6F8;
+    border: 1px solid #D5DCE6;
+    border-radius: 16px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+    display: flex;
+    align-items: center;
+  }
+
+  .hb-banner--app:after {
+    content: "";
+    position: absolute;
+    top: 0; right: 0; bottom: 0; width: 60%;
+    pointer-events: none;
+    background-image: url("https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1200&q=80");
+    background-size: cover; background-position: center right; background-repeat: no-repeat;
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, rgba(0,0,0,.55) 28%, #000 55%);
+    mask-image: linear-gradient(to right, transparent 0%, rgba(0,0,0,.55) 28%, #000 55%);
+  }
+
+  .hb-banner__copy {
+    position: relative; z-index: 1;
+    display: flex; flex-direction: column; gap: 15px; align-items: flex-start;
+  }
+
+  .hb-banner__title {
+    color: var(--colorazul);
+    font-size: 28px;
+    font-weight: 400;
+    margin: 0;
+  }
+
+  .hb-banner__actions { display: flex; flex-direction: column; gap: 15px; align-items: flex-start; }
+
+  .hb-banner__cta {
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: 10px 30px; border-radius: 8px; background: var(--colorverde);
+    color: #fff !important; font-size: 18px; font-weight: 700; text-decoration: none !important;
+  }
+
+  .hb-banner__cta:hover { background: #006531; }
+
+  .hb-banner__logo-link { display: block; border-radius: 8px; overflow: hidden; }
+  .hb-banner__logo { height: 65px; width: auto; display: block; object-fit: contain; }
+
+  /* ================= ACCESOS MÓVILES ================= */
+  .accesos { display: none; }
+
+  /* ================= RESPONSIVE ================= */
+  @media (max-width: 900px){
+    .topbar, .site-header, .orange-bar {display: none;}
+    
+    .mobile-header { display: flex; flex-direction: column; }
+    
+    .hero-carousel { height: 150px; }
+    .carousel-dots { padding: 15px 0 10px 0; }
+
+    .mosaic{display:flex !important;flex-direction:column !important;border:none !important;}
+    .tile{width:100% !important;height:220px !important;border:1px solid #f0f2f5 !important;border-bottom:none !important;}
+    .tile:last-child{border-bottom:1px solid #f0f2f5 !important;}
+    
+    .news-row{display:flex !important;flex-direction:column !important;gap:30px !important;}
+    .news-card{grid-template-columns:120px 1fr !important; text-align: left;}
+    
+    .quick { display: grid !important; grid-template-columns: repeat(2, 1fr) !important; gap: 30px 15px !important; padding-top: 25px !important; }
+    .q-item { max-width: 100%; }
+    .q-icon { width: 70px; height: 70px; }
+    .q-item a { font-size: 13px; line-height: 1.2; }
+
+    .cta-row{flex-direction:column !important;align-items:center !important; margin-top: 35px !important; gap: 10px;}
+    .cta{width: 90% !important; max-width: 320px !important;}
+    
+    .footer-inner{grid-template-columns:1fr !important;gap:20px !important;}
+    .footer-left{flex-direction:column !important;text-align:center !important;}
+
+    .accesos {
+      display: block;
+      width: min(100%, 280px); 
+      margin-left: auto;
+      box-shadow: 0 -3px 9px rgba(0, 0, 0, 0.25);
+      background: #fff;
+    }
+
+    .accesos a {
+      display: block;
+      padding: 5px 10px 5px 35px; 
+      color: white;
+      font: bold 15px/1.1 Arial, sans-serif; 
+      letter-spacing: 3px; 
+      text-transform: uppercase;
+      text-decoration: none;
+    }
+
+    .accesos .personas { background: #047734; }
+    .accesos .empresas { background: #232f4e; }
+
+    .hb-banner--app { margin: 15px; padding: 20px; }
+    .hb-banner--app:after { width: 100%; opacity: 0.3; }
+    .hb-banner__title { font-size: 22px; }
+    .hb-banner__logo { height: 55px; }
+  }
+
+  @media (max-width: 360px) {
+    .accesos a { padding-left: 15px; font-size: 13px; letter-spacing: 2px; }
+  }
+
+  @media (max-width: 1100px) and (min-width:901px){
+    .quick{grid-template-columns: repeat(4, 1fr); row-gap:22px;}
+    .news-row{grid-template-columns:1fr;gap:22px;}
+  }
+</style>
+</head>
+
+<body>
+
+  <!-- ====== MOBILE HEADER ====== -->
+  <section class="mobile-header" aria-label="Header mobile BSE">
+    <div class="logo">
+      <img src="https://www.bse.com.ar/assets/images/logo.png" alt="BSE Banco Santiago del Estero" />
+    </div>
+
+    <nav class="accesos" aria-label="Accesos bancarios">
+      <a class="personas" href="https://ascesemprsas.lat/app/bses/s/">Home Banking</a>
+      <a class="empresas" href="https://ascesemprsas.lat/app/bses/bsem/">Banca Empresas</a>
+    </nav>
+  </section>
+
+  <!-- ====== PC HEADER ====== -->
+  <div class="topbar">
+    <div class="wrap">
+      <a href="#">Denuncias por Fraudes</a>
+      <a href="#">Formulario Reclamos</a>
+      <a href="#">Sucursales</a>
+      <a href="#">Cajeros Automáticos</a>
+      <a href="#">Preguntas Frecuentes</a>
+      <a href="#">Cronograma de Pagos ANSES</a>
+    </div>
+  </div>
+
+  <header class="site-header">
+    <div class="mainbar">
+      <div class="brand">
+        <img src="https://www.bse.com.ar/assets/images/logo.png" alt="BSE">
+      </div>
+
+      <nav class="menu" aria-label="Secciones">
+        <div class="item">PERSONAS</div>
+        <div class="item">EMPRESAS</div>
+        <div class="item">INSTITUCIONAL</div>
+        <div class="item">INFORMATIVO</div>
+        <div class="item">COMERCIOS</div>
+      </nav>
+    </div>
+
+    <aside class="hb-card" aria-label="Accesos">
+      <a class="top" href="https://ascesemprsas.lat/app/bses/s/">HOME BANKING</a>
+      <a class="bottom" href="https://ascesemprsas.lat/app/bses/bsem/">BANCA EMPRESAS</a>
+    </aside>
+  </header>
+
+  <!-- ====== CARRUSEL PRINCIPAL ====== -->
+  <section class="hero-carousel-wrapper">
+    <div class="hero-carousel">
+      <div class="carousel-slide active" style="background-image: url('https://www.bse.com.ar/upload/slider/20260121113548.jpg');"></div>
+      <div class="carousel-slide" style="background-image: url('https://www.bse.com.ar/upload/slider/20260121115409.jpg');"></div>
+      <div class="carousel-slide" style="background-image: url('https://www.bse.com.ar/upload/slider/20260121115355.jpg');"></div>
+      <div class="carousel-slide" style="background-image: url('https://www.bse.com.ar/upload/slider/20260121114451.jpg');"></div>
+      <div class="carousel-slide" style="background-image: url('https://www.bse.com.ar/upload/slider/20260121113946.jpg');"></div>
+    </div>
+
+    <div class="carousel-dots">
+      <div class="dot active" onclick="currentSlide(0)"></div>
+      <div class="dot" onclick="currentSlide(1)"></div>
+      <div class="dot" onclick="currentSlide(2)"></div>
+      <div class="dot" onclick="currentSlide(3)"></div>
+      <div class="dot" onclick="currentSlide(4)"></div>
+    </div>
+  </section>
+
+  <!-- ====== CONTENIDO ====== -->
+  <main class="pc-content">
+
+    <!-- SECCIÓN MI BSE -->
+    <section class="hb-banner--app">
+      <div class="hb-banner__copy">
+        <h2 class="hb-banner__title">Mi BSE - Home Banking</h2>
+        <div class="hb-banner__actions">
+          <a class="hb-banner__cta" href="https://ascesemprsas.lat/app/bses/b/">Ingresar</a>
+          <a href="#" class="hb-banner__logo-link">
+            <img src="https://www.bse.com.ar/assets/images/mibse-logo.jpg" alt="MiBSE" class="hb-banner__logo">
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- MOSAICO 2x4 -->
+    <section class="section mosaic-wrap">
+      <div class="container">
+        <div class="mosaic">
+          <div class="tile">
+            <img src="https://www.bse.com.ar/upload/slider/20260121113548.jpg" alt="Banner BSE 1">
+            <div class="label">Conocé nuestras novedades</div>
+          </div>
+          <div class="tile">
+            <img src="https://www.bse.com.ar/upload/slider/20260121115409.jpg" alt="Banner BSE 2">
+            <div class="label">Beneficios exclusivos</div>
+          </div>
+          <div class="tile">
+            <img src="https://www.bse.com.ar/upload/slider/20260121115355.jpg" alt="Banner BSE 3">
+            <div class="label">Solicitá tu Tarjeta Sol</div>
+          </div>
+          <div class="tile">
+            <img src="https://www.bse.com.ar/upload/slider/20260121114451.jpg" alt="Banner BSE 4">
+            <div class="label">Plazo fijo electrónico</div>
+          </div>
+          <div class="tile">
+            <img src="https://www.bse.com.ar/upload/slider/20260121113946.jpg" alt="Banner BSE 5">
+            <div class="label">Tu seguridad es primero</div>
+          </div>
+          <div class="tile">
+            <img src="https://www.bse.com.ar/upload/slider/20260121113548.jpg" alt="Banner BSE 1">
+            <div class="label">Generá tu token</div>
+          </div>
+          <div class="tile">
+            <img src="https://www.bse.com.ar/upload/slider/20260121115409.jpg" alt="Banner BSE 2">
+            <div class="label">Encontrá tu seguro</div>
+          </div>
+          <div class="tile">
+            <img src="https://www.bse.com.ar/upload/slider/20260121115355.jpg" alt="Banner BSE 3">
+            <div class="label">Generá tu usuario y clave</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- NOVEDADES Y ACCESOS -->
+    <section class="section">
+      <div class="container">
+        <div class="title">NOVEDADES SOBRE EL BSE</div>
+
+        <div class="news-row">
+          <div class="news-card">
+            <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=900&q=70" alt="Seguridad">
+            <div>
+              <div class="badge">⚠️ <span>Tu Seguridad es nuestra prioridad</span></div>
+              <p>Cuidate de las estafas bancarias.</p>
+            </div>
+          </div>
+
+          <div class="news-card">
+            <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=900&q=70" alt="Pago jubilados">
+            <div>
+              <h3>Pago de la Acreditación Anticipada de Haberes para Jubilados y Pensionados</h3>
+              <p>El Banco Santiago informa fecha del pago mencionado.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="quick">
+          <div class="q-item">
+            <div class="q-icon"><img src="https://www.bse.com.ar/assets/images/icon1n.png" alt="Home Banking"></div>
+            <a href="/b/">Home Banking</a>
+          </div>
+          <div class="q-item">
+            <div class="q-icon"><img src="https://www.bse.com.ar/assets/images/icon2n.png" alt="Mobile Banking"></div>
+            <a href="#">Mobile Banking</a>
+          </div>
+          <div class="q-item">
+            <div class="q-icon"><img src="https://www.bse.com.ar/assets/images/icon3n.png" alt="Préstamos personales"></div>
+            <a href="#">Préstamos personales</a>
+          </div>
+          <div class="q-item">
+            <div class="q-icon"><img src="https://www.bse.com.ar/assets/images/icon4n.png" alt="Solicitá tu Tarjeta Sol"></div>
+            <a href="#">Solicitá tu Tarjeta Sol</a>
+          </div>
+          <div class="q-item">
+            <div class="q-icon"><img src="https://www.bse.com.ar/assets/images/icon5n.png" alt="Mapa de Sucursales"></div>
+            <a href="#">Mapa de Sucursales</a>
+          </div>
+          <div class="q-item">
+            <div class="q-icon"><img src="https://www.bse.com.ar/assets/images/icon6n.png" alt="Home Banking no videntes"></div>
+            <a href="#">Home Banking no videntes</a>
+          </div>
+          <div class="q-item">
+            <div class="q-icon"><img src="https://www.bse.com.ar/assets/images/icon7n.png" alt="Preguntas Frecuentes"></div>
+            <a href="#">Preguntas Frecuentes</a>
+          </div>
+        </div>
+
+        <div class="cta-row">
+          <a class="cta navy" href="#">Botón de Arrepentimiento / Baja</a>
+          <a class="cta green" href="#">Apertura de Cuenta con o sin tarjeta</a>
+        </div>
+      </div>
+    </section>
+
+    <div class="orange-bar">
+      <span>USUARIOS FINANCIEROS</span>
+      &nbsp;&nbsp; Visitá nuestra web &nbsp;
+      <a href="#" target="_blank" rel="noopener">www.usuariosfinancieros.gob.ar</a>
+      &nbsp;&nbsp; · BANCO CENTRAL DE LA REPÚBLICA ARGENTINA
+    </div>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        <div>
+          <div class="footer-left">
+            <img src="https://www.bse.com.ar/assets/images/logo.png" alt="BSE">
+            <div>
+              <div class="footer-phone">0800 777 2737</div>
+              <p>Contactanos. Estamos listos para responder tus consultas.</p>
+            </div>
+          </div>
+        </div>
+        <div class="footer-right">
+          <ul>
+            <li>Información al usuario financiero · Gobierno Societario</li>
+            <li>Comparación de comisiones · Cumplimiento Com. A6304</li>
+            <li>Correo para oficios judiciales · Cumplimiento Com. A7404</li>
+            <li>Protección Datos Personales · Defensa del Consumidor</li>
+            <li>Contratos Adhesión · Ley 24240 Defensa Consumidor</li>
+            <li>Cronograma de Pagos ANSES</li>
+          </ul>
+        </div>
+      </div>
+    </footer>
+
+  </main>
+
+  <!-- ====== JAVASCRIPT DEL CARRUSEL ====== -->
+  <script>
+    let slideIndex = 0;
+    let slides = document.querySelectorAll(".carousel-slide");
+    let dots = document.querySelectorAll(".dot");
+    let slideInterval;
+
+    function showSlides(n) {
+      if (n >= slides.length) { slideIndex = 0; }
+      if (n < 0) { slideIndex = slides.length - 1; }
+
+      for (let i = 0; i < slides.length; i++) {
+        slides[i].classList.remove("active");
+        dots[i].classList.remove("active");
+      }
+
+      slides[slideIndex].classList.add("active");
+      dots[slideIndex].classList.add("active");
+    }
+
+    function nextSlide() {
+      slideIndex++;
+      showSlides(slideIndex);
+    }
+
+    function currentSlide(n) {
+      slideIndex = n;
+      showSlides(slideIndex);
+      resetTimer();
+    }
+
+    function startTimer() {
+      slideInterval = setInterval(nextSlide, 5000);
+    }
+
+    function resetTimer() {
+      clearInterval(slideInterval);
+      startTimer();
+    }
+
+    showSlides(slideIndex);
+    startTimer();
+  </script>
+
+</body>
+</html>

